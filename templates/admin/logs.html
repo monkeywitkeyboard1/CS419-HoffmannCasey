@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Audit Logs — SecureDocs{% endblock %}
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+  <h1 style="font-size:24px;font-weight:600">Security audit log</h1>
+  <a href="{{ url_for('admin.dashboard') }}" class="btn-secondary">← Admin</a>
+</div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:16px">
+  Showing last 200 events, newest first.
+</p>
+<div style="overflow-x:auto;border-radius:10px;">
+  <table class="log-table">
+    <thead>
+      <tr>
+        <th>Timestamp (UTC)</th>
+        <th>Event</th>
+        <th>Severity</th>
+        <th>User</th>
+        <th>IP</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in entries %}
+      <tr>
+        <td>{{ entry.timestamp }}</td>
+        <td>{{ entry.event_type }}</td>
+        <td class="sev-{{ entry.severity }}">{{ entry.severity }}</td>
+        <td>{{ entry.user_id or '—' }}</td>
+        <td>{{ entry.ip_address }}</td>
+        <td style="max-width:300px;word-break:break-all">{{ entry.details | tojson }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" style="text-align:center;color:#888">No log entries yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Login — SecureDocs{% endblock %}
+{% block content %}
+<div class="form-card">
+  <h1>Log in</h1>
+  <form method="post" action="{{ url_for('auth.login') }}" autocomplete="off">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username"
+           maxlength="20" required autocomplete="username"
+           pattern="[a-zA-Z0-9_]+" title="Alphanumeric and underscore only">
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password"
+           maxlength="128" required autocomplete="current-password">
+
+    <button type="submit" class="btn-primary">Log in</button>
+  </form>
+  <p class="form-footer">No account? <a href="{{ url_for('auth.register') }}">Register</a></p>
+</div>
+{% endblock %}

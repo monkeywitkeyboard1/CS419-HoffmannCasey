@@ -1,0 +1,27 @@
+# Secrets — never commit these
+.env
+data/secret.key
+cert.pem
+key.pem
+
+# Data files (may contain PII)
+data/users.json
+data/sessions.json
+data/documents.json
+data/uploads/
+
+# Logs
+logs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# OS
+.DS_Store
+Thumbs.db

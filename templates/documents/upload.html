@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Upload Document — SecureDocs{% endblock %}
+{% block content %}
+<div class="upload-card">
+  <h1>Upload document</h1>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:24px">
+    Files are encrypted with AES-128 (Fernet) before storage.
+  </p>
+  <form method="post" action="{{ url_for('documents.upload') }}"
+        enctype="multipart/form-data">
+
+    <label for="title">Title</label>
+    <input type="text" id="title" name="title"
+           maxlength="200" required placeholder="Document title">
+
+    <label for="description">Description <small>(optional)</small></label>
+    <textarea id="description" name="description" maxlength="500"
+              placeholder="Brief description..."></textarea>
+
+    <label>File</label>
+    <div id="drop-zone" class="drop-zone">
+      <p>Drop file here or click to browse</p>
+      <small class="allowed-types">
+        Allowed: PDF, TXT, DOCX, PNG, JPG, JPEG — max 10 MB
+      </small>
+      <input type="file" id="file-input" name="file" style="display:none"
+             accept=".pdf,.txt,.docx,.png,.jpg,.jpeg" required>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:20px">
+      <button type="submit" class="btn-primary" style="flex:1">
+        Encrypt &amp; Upload
+      </button>
+      <a href="{{ url_for('documents.dashboard') }}"
+         class="btn-secondary" style="padding:11px 20px">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

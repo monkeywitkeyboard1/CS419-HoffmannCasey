@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}SecureDocs — Secure Document Sharing{% endblock %}
+{% block content %}
+<div class="hero">
+  <h1>Secure Document Sharing</h1>
+  <p>Upload, encrypt, and share confidential documents with fine-grained access control.</p>
+  <div class="hero-cta">
+    <a href="{{ url_for('auth.register') }}" class="btn-primary">Get started</a>
+    <a href="{{ url_for('auth.login') }}" class="btn-secondary">Log in</a>
+  </div>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>End-to-end encryption</h3>
+      <p>Documents are encrypted with AES-128 Fernet before being written to disk.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👥</div>
+      <h3>Role-based access</h3>
+      <p>Share with specific users as viewer or editor. Admins see everything.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📋</div>
+      <h3>Full audit trail</h3>
+      <p>Every login, upload, download and access denial is logged for review.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛡️</div>
+      <h3>Hardened auth</h3>
+      <p>bcrypt password hashing, account lockout, rate limiting, and secure sessions.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Register — SecureDocs{% endblock %}
+{% block content %}
+<div class="form-card">
+  <h1>Create account</h1>
+  <form method="post" action="{{ url_for('auth.register') }}" autocomplete="off">
+    <label for="username">Username <small>(3–20 chars, letters/numbers/_)</small></label>
+    <input type="text" id="username" name="username"
+           minlength="3" maxlength="20" required
+           pattern="[a-zA-Z0-9_]+" autocomplete="username">
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email"
+           maxlength="254" required autocomplete="email">
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password"
+           minlength="12" maxlength="128" required autocomplete="new-password"
+           oninput="checkStrength(this.value)">
+    <div id="strength-bar" class="strength-bar"></div>
+    <small id="strength-msg" class="strength-msg"></small>
+
+    <label for="confirm_password">Confirm password</label>
+    <input type="password" id="confirm_password" name="confirm_password"
+           minlength="12" maxlength="128" required autocomplete="new-password">
+
+    <button type="submit" class="btn-primary">Create account</button>
+  </form>
+  <p class="form-footer">Have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+</div>
+
+<script>
+function checkStrength(pw) {
+  let score = 0;
+  const checks = [/.{12,}/, /[A-Z]/, /[a-z]/, /[0-9]/, /[!@#$%^&*]/];
+  checks.forEach(r => { if (r.test(pw)) score++; });
+  const msgs = ['', 'Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
+  const colors = ['', '#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#27ae60'];
+  document.getElementById('strength-msg').textContent = msgs[score] || '';
+  const bar = document.getElementById('strength-bar');
+  bar.style.width = (score * 20) + '%';
+  bar.style.background = colors[score] || '#ddd';
+}
+</script>
+{% endblock %}
