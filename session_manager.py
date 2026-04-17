@@ -23,8 +23,11 @@ class SessionManager:
                 json.dump({}, f)
 
     def _load(self):
-        with open(self.sessions_file, 'r') as f:
-            return json.load(f)
+        try:
+            with open(self.sessions_file, 'r') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            return {}
 
     def _save(self, sessions):
         with open(self.sessions_file, 'w') as f:
@@ -60,10 +63,13 @@ class SessionManager:
             self.destroy_session(token)
             return None
 
-        # Refresh last activity
-        session['last_activity'] = time.time()
-        sessions[token] = session
-        self._save(sessions)
+        # Only save if last_activity is meaningfully stale (e.g. 60 seconds)
+        now = time.time()
+        if now - session['last_activity'] > 60:
+            session['last_activity'] = now
+            sessions[token] = session
+            self._save(sessions)
+
         return session
 
     def destroy_session(self, token):
