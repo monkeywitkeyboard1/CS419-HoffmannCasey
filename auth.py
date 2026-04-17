@@ -114,6 +114,33 @@ def login():
 
     return render_template('auth/login.html')
 
+@auth_bp.route('/register-guest', methods=['GET', 'POST'])
+def register_guest():
+    """Register a guest account (read-only, view shared docs only)."""
+    if g.user_id:
+        return redirect(url_for('documents.dashboard'))
+
+    if request.method == 'POST':
+        username = sanitize(request.form.get('username', ''))
+        email = sanitize(request.form.get('email', ''))
+        password = request.form.get('password', '')
+        confirm = request.form.get('confirm_password', '')
+
+        if password != confirm:
+            flash('Passwords do not match', 'error')
+            return render_template('auth/register_guest.html')
+
+        user, error = create_user(username, email, password, role='guest')
+        if error:
+            log_validation_failure(security_log, None, 'guest_registration', error)
+            flash(error, 'error')
+            return render_template('auth/register_guest.html')
+
+        flash('Guest account created! You can view documents shared with you.', 'success')
+        security_log.log_event('GUEST_REGISTERED', user['id'], {'username': username})
+        return redirect(url_for('auth.login'))
+
+    return render_template('auth/register_guest.html')
 
 @auth_bp.route('/logout', methods=['POST'])
 def logout():

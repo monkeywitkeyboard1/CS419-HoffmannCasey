@@ -33,7 +33,7 @@
             {% if doc.owner_id == g.user_id %}
             <!-- Share -->
             <button class="btn-sm btn-secondary"
-                    onclick="document.getElementById('share-{{ doc.id }}').style.display='block'">Share</button>
+                    data-share-target="share-{{ doc.id }}">Share</button>
             <div id="share-{{ doc.id }}" class="share-form" style="display:none">
               <form method="post" action="{{ url_for('documents.share', doc_id=doc.id) }}">
                 <input type="text" name="username" placeholder="Username" maxlength="20" required>
@@ -47,7 +47,7 @@
 
             <!-- Delete -->
             <form method="post" action="{{ url_for('documents.delete', doc_id=doc.id) }}"
-                  onsubmit="return confirm('Delete this document permanently?')" style="display:inline">
+                  data-confirm="Delete this document permanently?" style="display:inline">
               <button type="submit" class="btn-sm btn-danger">Delete</button>
             </form>
             {% endif %}

@@ -1,75 +1,68 @@
 {% extends "base.html" %}
-{% block title %}Admin Dashboard — SecureDocs{% endblock %}
+{% block title %}My Documents — SecureDocs{% endblock %}
 {% block content %}
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
-  <h1 style="font-size:24px;font-weight:600">Admin Dashboard</h1>
-  <a href="{{ url_for('admin.audit_logs') }}" class="btn-secondary">View Audit Logs</a>
-</div>
+<div class="dashboard">
+  <div class="dash-header">
+    <h1>My Documents</h1>
+    {% if user.role in ['user', 'admin'] %}
+      <a href="{{ url_for('documents.upload') }}" class="btn-primary">+ Upload</a>
+    {% endif %}
+  </div>
 
-<div class="admin-grid">
-  <div class="stat-card">
-    <div class="stat-value">{{ users|length }}</div>
-    <div class="stat-label">Total users</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">{{ users.values()|selectattr('locked_until')|list|length }}</div>
-    <div class="stat-label">Locked accounts</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">{{ users.values()|selectattr('role','eq','admin')|list|length }}</div>
-    <div class="stat-label">Admins</div>
-  </div>
-</div>
+  {% if documents %}
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>File</th>
+          <th>Owner</th>
+          <th>Uploaded</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doc in documents %}
+        <tr>
+          <td>{{ doc.title }}</td>
+          <td>{{ doc.original_name }}</td>
+          <td>{{ 'You' if doc.owner_id == g.user_id else doc.owner_id }}</td>
+          <td>{{ doc.created_at | int | timestamp_to_date }}</td>
+          <td class="actions">
+            <a href="{{ url_for('documents.download', doc_id=doc.id) }}" class="btn-sm">Download</a>
 
-<h2 style="font-size:18px;font-weight:600;margin-bottom:16px">User accounts</h2>
-<table class="doc-table">
-  <thead>
-    <tr>
-      <th>Username</th>
-      <th>Email</th>
-      <th>Role</th>
-      <th>Status</th>
-      <th>Failed attempts</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for uid, u in users.items() %}
-    <tr>
-      <td>{{ u.username }}</td>
-      <td>{{ u.email }}</td>
-      <td>
-        <span class="role-badge role-{{ u.role }}">{{ u.role }}</span>
-      </td>
-      <td>
-        {% if u.locked_until %}
-          <span class="locked-badge">Locked</span>
-        {% else %}
-          <span style="color:var(--success);font-size:13px">Active</span>
-        {% endif %}
-      </td>
-      <td>{{ u.failed_attempts or 0 }}</td>
-      <td class="actions">
-        {% if uid != g.user_id %}
-          {% if u.locked_until %}
-            <form method="post" action="{{ url_for('admin.unlock_user', user_id=uid) }}">
-              <button type="submit" class="btn-sm">Unlock</button>
+            {% if doc.owner_id == g.user_id %}
+            <!-- Share -->
+            <button class="btn-sm btn-secondary"
+                    data-share-target="share-{{ doc.id }}">Share</button>
+            <div id="share-{{ doc.id }}" class="share-form" style="display:none">
+              <form method="post" action="{{ url_for('documents.share', doc_id=doc.id) }}">
+                <input type="text" name="username" placeholder="Username" maxlength="20" required>
+                <select name="role">
+                  <option value="viewer">Viewer</option>
+                  <option value="editor">Editor</option>
+                </select>
+                <button type="submit" class="btn-sm">Share</button>
+              </form>
+            </div>
+
+            <!-- Delete -->
+            <form method="post" action="{{ url_for('documents.delete', doc_id=doc.id) }}"
+            data-confirm="Delete this document permanently?" style="display:inline">
+              <button type="submit" class="btn-sm btn-danger">Delete</button>
             </form>
-          {% else %}
-            <form method="post" action="{{ url_for('admin.lock_user', user_id=uid) }}">
-              <button type="submit" class="btn-sm btn-secondary">Lock</button>
-            </form>
-          {% endif %}
-          <form method="post" action="{{ url_for('admin.delete_user', user_id=uid) }}"
-                onsubmit="return confirm('Permanently delete user {{ u.username }}?')">
-            <button type="submit" class="btn-sm btn-danger">Delete</button>
-          </form>
-        {% else %}
-          <span style="color:var(--muted);font-size:12px">You</span>
-        {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty-state">
+      <p>No documents yet.</p>
+      {% if user.role in ['user', 'admin'] %}
+        <a href="{{ url_for('documents.upload') }}" class="btn-primary">Upload your first document</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

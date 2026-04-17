@@ -11,7 +11,8 @@ def set_security_headers(response):
     # Content Security Policy
     response.headers['Content-Security-Policy'] = (
         "default-src 'self'; "
-        "script-src 'self'; "          # Remove 'unsafe-inline' once JS is modularised
+        "script-src 'self'; "
+        "script-src-attr 'none'; "          # ← add this line
         "style-src 'self' 'unsafe-inline'; "
         "img-src 'self' data:; "
         "font-src 'self'; "
