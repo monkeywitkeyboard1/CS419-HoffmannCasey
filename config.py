@@ -14,6 +14,8 @@ class Config:
 
     # Session
     SESSION_TIMEOUT = int(os.environ.get('SESSION_TIMEOUT', 1800))  # 30 min
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Strict'
 
     # Auth
     BCRYPT_ROUNDS = 12

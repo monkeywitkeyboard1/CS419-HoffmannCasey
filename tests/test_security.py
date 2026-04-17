@@ -39,7 +39,18 @@ def app():
 
 @pytest.fixture
 def client(app):
-    return app.test_client()
+    c = app.test_client()
+    # Reset rate limiter so IP bans don't bleed between tests
+    import auth
+    auth.rate_limiter._buckets.clear()
+    # Reset user store so lockouts don't bleed between tests
+    import user_store
+    from config import Config
+    data_dir = Config.DATA_DIR  # user_store resolves path at import time from Config
+    users_file = os.path.join(data_dir, 'users.json')
+    if os.path.exists(users_file):
+        os.remove(users_file)
+    return c
 
 
 @pytest.fixture

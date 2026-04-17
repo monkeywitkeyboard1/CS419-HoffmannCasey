@@ -86,15 +86,15 @@ def login():
             record_failed_attempt(user['id'])
             log_login_fail(security_log, username, 'Wrong password')
 
-            # Check if this attempt triggered a lockout
+            # ✅ Re-fetch so we read the updated locked_until from disk
+            user = get_user_by_username(username)
             locked, _ = is_account_locked(user)
             if locked:
                 log_account_locked(security_log, user['id'], username)
-                flash('Account locked after too many failed attempts.', 'error')
-            else:
-                flash('Invalid credentials', 'error')
+            flash('Invalid credentials', 'error')
 
             return render_template('auth/login.html')
+
 
         # ── Success ──────────────────────────────────────────────────────────
         reset_failed_attempts(user['id'])
