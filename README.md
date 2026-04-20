@@ -1,4 +1,4 @@
-# SecureDocs — CS 419 Project
+# HC Box — CS 419 Project
 
 Secure document sharing system with encryption, RBAC, and audit logging.
 
@@ -91,11 +91,4 @@ secure-app/
 | Audit logging           | JSON-structured events in `logs/security.log`       |
 | HTTPS redirect          | Force HTTP → HTTPS in non-development mode          |
 
-## Deliverables checklist
 
-- [ ] Working application (`app.py`)
-- [ ] Security design document (`docs/security_design.pdf`)
-- [ ] Penetration testing report (`docs/pentest_report.pdf`)
-- [ ] Presentation slides (`presentation/slides.pptx`)
-- [ ] README (this file)
-- [ ] Tests passing (`pytest tests/ -v`)

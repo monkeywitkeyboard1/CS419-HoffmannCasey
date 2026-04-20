@@ -31,7 +31,7 @@ def register():
     if request.method == 'POST':
         username = sanitize(request.form.get('username', ''))
         email = sanitize(request.form.get('email', ''))
-        password = request.form.get('password', '')  # Don't escape — goes to bcrypt
+        password = request.form.get('password', '')  
         confirm = request.form.get('confirm_password', '')
 
         if password != confirm:
@@ -86,7 +86,7 @@ def login():
             record_failed_attempt(user['id'])
             log_login_fail(security_log, username, 'Wrong password')
 
-            # ✅ Re-fetch so we read the updated locked_until from disk
+            # Re-fetch so we read the updated locked_until from disk
             user = get_user_by_username(username)
             locked, _ = is_account_locked(user)
             if locked:
