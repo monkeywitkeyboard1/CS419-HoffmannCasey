@@ -12,11 +12,12 @@ def set_security_headers(response):
     response.headers['Content-Security-Policy'] = (
         "default-src 'self'; "
         "script-src 'self'; "
-        "script-src-attr 'none'; "          # ← add this line
+        "script-src-attr 'none'; "         
         "style-src 'self' 'unsafe-inline'; "
         "img-src 'self' data:; "
         "font-src 'self'; "
         "connect-src 'self'; "
+        "form-action 'self'; "
         "frame-ancestors 'none'"
     )
 
