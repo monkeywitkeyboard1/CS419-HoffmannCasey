@@ -1,5 +1,8 @@
 # HC Box — CS 419 Project
 
+**Team:** Anton Hoffmann, Will Casey
+**Course:** CS 419 — Secure Web Application Project, Spring 2026
+
 Secure document sharing system with encryption, RBAC, and audit logging.
 
 ## Setup
@@ -8,7 +11,7 @@ Secure document sharing system with encryption, RBAC, and audit logging.
 
 ```bash
 git clone <your-repo-url>
-cd secure-app
+cd CS419-HoffmannCasey
 
 python -m venv venv
 source venv/bin/activate       # Windows: venv\Scripts\activate
@@ -23,19 +26,28 @@ cp .env.example .env
 python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-### 3. (Optional) Generate a self-signed TLS certificate
+### 3. Generate a self-signed TLS certificate
+
+The app automatically enables HTTPS when `cert.pem` and `key.pem` are present in the project root. Without them it falls back to plain HTTP.
 
 ```bash
+# macOS / Linux
 openssl req -x509 -newkey rsa:4096 -nodes \
   -out cert.pem -keyout key.pem -days 365 \
   -subj "/CN=localhost"
+```
+
+```powershell
+# Windows (PowerShell)
+& "C:\Program Files\Git\usr\bin\openssl.exe" req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365 -subj "/CN=localhost"
 ```
 
 ### 4. Run
 
 ```bash
 python app.py
-# Open http://127.0.0.1:5000
+# Open https://127.0.0.1:5000
+# Note: your browser will warn about the self-signed certificate — click Advanced > Proceed
 ```
 
 ### 5. Create an admin account
@@ -51,7 +63,7 @@ python -m pytest tests/ -v
 ## Project structure
 
 ```
-secure-app/
+CS419-HoffmannCasey/
 ├── app.py              # Flask app, routes, middleware
 ├── config.py           # Environment-based config
 ├── security.py         # Security headers + HTTPS redirect
@@ -75,20 +87,19 @@ secure-app/
 
 ## Security controls implemented
 
-| Requirement             | Implementation                                      |
-|-------------------------|-----------------------------------------------------|
-| Password hashing        | bcrypt, cost factor 12                              |
-| Account lockout         | 5 failures → 15-minute lockout                      |
-| Rate limiting           | 10 login attempts per IP per minute                 |
-| Session tokens          | `secrets.token_urlsafe(32)`, 30-min timeout         |
-| Session cookie flags    | HttpOnly, Secure, SameSite=Strict                   |
-| RBAC                    | Admin / User / Guest with permission decorators     |
-| Input validation        | Whitelist regex, length limits, HTML escaping       |
-| XSS prevention          | Jinja2 auto-escape + `html.escape()` on all inputs  |
-| Path traversal          | `secure_filename` + `os.path.abspath` boundary check|
-| File encryption         | Fernet (AES-128-CBC + HMAC-SHA256)                  |
-| Security headers        | CSP, X-Frame-Options, HSTS, nosniff, etc.           |
-| Audit logging           | JSON-structured events in `logs/security.log`       |
-| HTTPS redirect          | Force HTTP → HTTPS in non-development mode          |
-
+| Requirement          | Implementation                                       |
+|----------------------|------------------------------------------------------|
+| Password hashing     | bcrypt, cost factor 12                               |
+| Account lockout      | 5 failures → 15-minute lockout                       |
+| Rate limiting        | 10 login attempts per IP per minute                  |
+| Session tokens       | `secrets.token_urlsafe(32)`, 30-min timeout          |
+| Session cookie flags | HttpOnly, Secure, SameSite=Strict                    |
+| RBAC                 | Admin / User / Guest with permission decorators      |
+| Input validation     | Whitelist regex, length limits, HTML escaping        |
+| XSS prevention       | Jinja2 auto-escape + `html.escape()` on all inputs   |
+| Path traversal       | `secure_filename` + `os.path.abspath` boundary check |
+| File encryption      | Fernet (AES-128-CBC + HMAC-SHA256)                   |
+| Security headers     | CSP, X-Frame-Options, HSTS, nosniff, etc.            |
+| Audit logging        | JSON-structured events in `logs/security.log`        |
+| HTTPS redirect       | Force HTTP → HTTPS in non-development mode           |
 
